@@ -75,7 +75,7 @@ grafana:
     ports:
      - "9090:9090"
     volumes:
-     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+     - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
     command: "--config.file=/etc/prometheus/prometheus.yml"
     container_name: prometheus
     networks:
@@ -88,7 +88,7 @@ grafana:
     environment:
      CONFIG_YML : "/etc/jmx_exporter/config.yml"
     volumes:
-     - ./prometheus-jmx-exporter/prom-jmx-agent-config.yml:/etc/jmx_exporter/config.yml
+     - ./configs/prom-jmx-agent-config.yml:/etc/jmx_exporter/config.yml
     container_name: kafka-exporter
     depends_on:
      - kafka
