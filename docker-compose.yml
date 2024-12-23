@@ -51,10 +51,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
-volumes:
-  postgres_data:
-
-grafana:
+  grafana:
     image: "grafana/grafana:9.5.12"
     ports:
      - "3000:3000"
@@ -138,3 +135,6 @@ networks:
   default-network:
     name: default-network
     driver: bridge
+
+volumes:
+  postgres_data:
