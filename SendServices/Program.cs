@@ -1,7 +1,6 @@
-﻿using SendServices;
+﻿using SendServices.Kafka;
 
-NotificationGateway gateway = new NotificationGateway();
-//Task<string> result = gateway.SendNotification();
-Console.WriteLine("Wait result");
-//await result;
-//Console.WriteLine("Result: " + result.Result);
+var notificationConsumer = new NotificationConsumer<NotificationMessage>();
+Console.WriteLine("Start Listen messages");  
+await notificationConsumer.ConsumeAsync();
+Console.WriteLine("Notifications end work");

@@ -38,6 +38,10 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "Confluent.Kafka": {
+              "target": "Package",
+              "version": "[2.6.1, )"
+            },
             "Json.Net": {
               "target": "Package",
               "version": "[1.0.33, )"
