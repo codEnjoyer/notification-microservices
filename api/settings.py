@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class DatabaseSettings(BaseSettings):
-    model_config = SettingsConfigDict(extra="allow", env_file="../.env")
+    model_config = SettingsConfigDict(extra="allow")
 
     host: str = Field(validation_alias="DB_HOST")
     port: int = Field(validation_alias="DB_PORT")
@@ -24,4 +24,15 @@ class DatabaseSettings(BaseSettings):
         return str(host)
 
 
+class BrokerSettings(BaseSettings):
+    hostname: str = Field(default="kafka", validation_alias="BROKER_HOST")
+    port: int = Field(default=9092, validation_alias="BROKER_PORT")
+    notifications_topic: str = Field(default="notifications-topic")
+
+    @property
+    def url(self) -> str:
+        return f"{self.hostname}:{self.port}"
+
+
+broker_settings = BrokerSettings()
 db_settings = DatabaseSettings()
