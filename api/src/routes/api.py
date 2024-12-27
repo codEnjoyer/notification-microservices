@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-from src.schemas.email import EmailMessageSchema
-from src.schemas.tg import TgMessageSchema
+from src.broker.producer import notifications_publisher
+from src.schemas.email import BrokerEmailMessage, EmailMessageIn
+from src.schemas.tg import BrokerTgMessage, TgMessageIn
 
 router = APIRouter(
     prefix="/api",
@@ -12,9 +13,11 @@ router = APIRouter(
 @router.post(
     "/email",
 )
-async def root(
-    payload: EmailMessageSchema,
+async def send_email_message(
+    payload: EmailMessageIn,
 ) -> dict:
+    broker_msg = BrokerEmailMessage.from_message_in(payload)
+    await notifications_publisher.publish(message=broker_msg)
     return payload
 
 
@@ -22,6 +25,8 @@ async def root(
     "/tg",
 )
 async def send_tg_message(
-    payload: TgMessageSchema,
+    payload: TgMessageIn,
 ) -> dict:
+    broker_msg = BrokerTgMessage.from_message_in(payload)
+    await notifications_publisher.publish(message=broker_msg)
     return payload
