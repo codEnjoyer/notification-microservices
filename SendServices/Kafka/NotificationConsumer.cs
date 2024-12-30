@@ -14,7 +14,7 @@ public class NotificationConsumer<T>
     {
         _host = "localhost";
         _port = 9092;
-        _topic = "producer_logs";
+        _topic = "notifications-topic";
         _notificationGateway = new NotificationGateway();
     }
 
@@ -23,7 +23,7 @@ public class NotificationConsumer<T>
         return new ConsumerConfig
         {
             BootstrapServers = $"{_host}:{_port}",
-            GroupId = "foo",
+            GroupId = "my-group",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
     }
