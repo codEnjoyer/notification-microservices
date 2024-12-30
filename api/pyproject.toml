@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "advanced-alchemy>=0.26.2",
     "alembic>=1.14.0",
     "alembic-postgresql-enum>=1.4.0",
     "asyncpg>=0.30.0",
