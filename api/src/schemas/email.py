@@ -1,7 +1,12 @@
 from pydantic import EmailStr
 
-from src.schemas.message import MessageSchema
+from enums import MessageType
+from src.schemas.message import BrokerMessage, MessageSchema
 
 
-class EmailMessageSchema(MessageSchema):
+class EmailMessageIn(MessageSchema):
     address: EmailStr
+
+
+class BrokerEmailMessage(BrokerMessage, EmailMessageIn):
+    type: MessageType = MessageType.EMAIL

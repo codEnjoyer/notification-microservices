@@ -14,5 +14,5 @@ docker compose up --build -d
 # Запуск проекта для разработки
 
 ```bash
-docker compose up watch
+docker compose watch [*services]
 ```
