@@ -19,12 +19,17 @@ public class NotificationGateway
     private readonly KafkaProducer _kafkaProducer;
     private readonly ISendingChannel[] _sendingChannels =
     {
-        new EmailChannel()
+        new EmailChannel(),
+        new TelegramChannel()
     };
 
     public NotificationGateway(KafkaProducer kafkaProducer)
     {
         _kafkaProducer = kafkaProducer;
+        foreach (var channel in _sendingChannels)
+        {
+            channel.Init();
+        }
     }
 
     public async Task SendNotification(string messageJson)
@@ -43,6 +48,6 @@ public class NotificationGateway
             return;
         }
 
-        await _kafkaProducer.ProduceSendResponse("Failure");
+        await _kafkaProducer.ProduceSendResponse("Unknown Failure");
     }
 }
