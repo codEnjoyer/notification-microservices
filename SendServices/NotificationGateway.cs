@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SendServices.Kafka;
 
 namespace SendServices;
 
@@ -15,17 +16,26 @@ public struct RequestItem
 
 public class NotificationGateway
 {
+    private readonly KafkaProducer _kafkaProducer;
     private readonly ISendingChannel[] _sendingChannels =
     {
-        new EmailChannel()
+        new EmailChannel(),
+        new TelegramChannel()
     };
 
-    public async Task<string> SendNotification()
+    public NotificationGateway(KafkaProducer kafkaProducer)
     {
-        using StreamReader sr =
-            new StreamReader("C:\\Users\\pathf\\RiderProjects\\SendServices\\SendServices\\testRequest.json");
-        var json = sr.ReadToEnd();
-        var request = JsonConvert.DeserializeObject<RequestItem>(json);
+        _kafkaProducer = kafkaProducer;
+        foreach (var channel in _sendingChannels)
+        {
+            channel.Init();
+        }
+    }
+
+    public async Task SendNotification(string messageJson)
+    {
+        Console.WriteLine("Get message " + messageJson);
+        var request = JsonConvert.DeserializeObject<RequestItem>(messageJson);
 
         foreach (var sendingChannel in _sendingChannels)
         {
@@ -33,9 +43,11 @@ public class NotificationGateway
                 continue;
 
             var result = await Task.Run(() => sendingChannel.Send(request.Address, request.Content));
-            return result;
+
+            await _kafkaProducer.ProduceSendResponse(result);
+            return;
         }
 
-        return "Failure";
+        await _kafkaProducer.ProduceSendResponse("Unknown Failure");
     }
 }

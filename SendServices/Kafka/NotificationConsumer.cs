@@ -2,20 +2,20 @@ using Confluent.Kafka;
 
 namespace SendServices.Kafka;
 
-public class NotificationConsumer<T>
+public class NotificationConsumer
 {
     private readonly string? _host;
     private readonly int _port;
     private readonly string? _topic;
 
     private NotificationGateway _notificationGateway;
-    
-    public NotificationConsumer()
+
+    public NotificationConsumer(NotificationGateway gateway)
     {
         _host = "localhost";
         _port = 9092;
         _topic = "notifications-topic";
-        _notificationGateway = new NotificationGateway();
+        _notificationGateway = gateway;
     }
 
     ConsumerConfig GetConsumerConfig()
@@ -30,8 +30,8 @@ public class NotificationConsumer<T>
 
     public async Task ConsumeAsync()
     {
-        using (var consumer = new ConsumerBuilder<Ignore, T>(GetConsumerConfig())
-                   .SetValueDeserializer(new NotificationSerialization<T>())
+        using (var consumer = new ConsumerBuilder<string, string>(GetConsumerConfig())
+                   .SetValueDeserializer(new NotificationSerialization<string>())
                    .Build())
         {
             consumer.Subscribe(_topic);
@@ -44,12 +44,15 @@ public class NotificationConsumer<T>
                 {
                     var consumeResult = consumer.Consume();
 
-                    if (consumeResult.Message.Value is { } result)
+                    if (consumeResult != null && consumeResult.Message.Key == "send_request")
                     {
-                        Console.WriteLine($"Data Received - {result}");
+                        _notificationGateway.SendNotification(consumeResult.Message.Value);
                     }
-                    else
+                    else if (consumeResult != null)
                     {
+                        Console.WriteLine("Test recieved - " + consumeResult.Message.Value);
+                    }
+                    else {
                         Console.WriteLine("Received data is not Message or Null?");
                     }
                 }
